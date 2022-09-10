@@ -43,6 +43,13 @@ extension Tag {
 
     @NSManaged public var title: String
     @NSManaged public var reminders: Set<Reminder>?
+    @objc var reminderCount: Int{
+      willAccessValue(forKey: "reminders")
+      let count = reminders?.count ?? 0
+      didAccessValue(forKey: "reminders")
+      
+      return count
+    }
   
   static func fetchOrCreateWith(title: String, in context: NSManagedObjectContext) -> Tag {
     let request: NSFetchRequest<Tag> = fetchRequest()
