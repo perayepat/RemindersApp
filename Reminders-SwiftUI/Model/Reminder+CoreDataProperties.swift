@@ -35,7 +35,7 @@ import SwiftUI
 
 extension Reminder{
   @NSManaged var title: String
-  @NSManaged var isComplete: Bool
+  @NSManaged var isCompleted: Bool
   @NSManaged var notes: String?
   @NSManaged var dueDate: Date?
   @NSManaged var priority: Int16
@@ -58,5 +58,37 @@ extension Reminder{
   //Generic defines the return type is of remnider
   static func basicFetchRequest() -> FetchRequest<Reminder> {
     FetchRequest(entity: Reminder.entity(), sortDescriptors: [])
+  }
+  
+  //MARK: Sorting 
+  
+  //Returning a sorted fetch request
+  static func sortedFetchRequest() -> FetchRequest<Reminder>{
+    /// Define a sort descriptor you want to sort against, such as due date
+    let dateSortDescriptor = NSSortDescriptor(key: "dueDate", ascending: false)
+    return FetchRequest(entity: Reminder.entity(), sortDescriptors: [dateSortDescriptor])
+  }
+  
+  //Sort by title and priority
+  static func fetchRequestSortedByTitileAndPriority() -> FetchRequest<Reminder>{
+    let titleSortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+    let prioritySortDescriptor = NSSortDescriptor(key: "priority", ascending: true)
+    
+    //if title is first then it will be sorted by title then priotity if titles are the same
+    return FetchRequest(entity: Reminder.entity(), sortDescriptors: [titleSortDescriptor, prioritySortDescriptor])
+  }
+  
+  //MARK: Predicates
+    
+  static func completedRemindersFetchRequest() -> FetchRequest<Reminder> {
+    let titleSortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+    let prioritySortDescriptor = NSSortDescriptor(key: "priority", ascending: false)
+    //Filter the reminders,
+    /// %K and %@ are formate specifiers,
+    // %K / apply a filter on the isCompleted as a key path
+    // %@ / this is for object value like the NSNumber false
+    let isCompletedPredicate = NSPredicate(format: "%K == %@", "isCompleted", NSNumber(value: false))
+    
+    return FetchRequest(entity: Reminder.entity(), sortDescriptors: [titleSortDescriptor, prioritySortDescriptor], predicate: isCompletedPredicate)
   }
 }

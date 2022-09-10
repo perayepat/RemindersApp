@@ -13,6 +13,7 @@ struct ReminderRow: View {
     HStack {
       Button(action: {
         self.isCompleted.toggle()
+        reminder.isCompleted = self.isCompleted
       }) {
         ReminderStatusView(isChecked: $isCompleted)
       }

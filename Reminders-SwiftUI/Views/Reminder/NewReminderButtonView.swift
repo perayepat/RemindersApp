@@ -24,4 +24,6 @@ struct NewReminderButtonView_Previews: PreviewProvider {
   static var previews: some View {
     NewReminderButtonView(isShowingCreateModal: .constant(false))
   }
+  
+  
 }

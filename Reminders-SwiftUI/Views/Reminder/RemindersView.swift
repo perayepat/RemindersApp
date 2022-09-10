@@ -5,7 +5,7 @@ import SwiftUI
 struct RemindersView: View {
   @State var isShowingCreateModal: Bool = false
   
-  let fetchRequest = Reminder.basicFetchRequest()
+  let fetchRequest = Reminder.completedRemindersFetchRequest()
   var reminders: FetchedResults<Reminder>{
     //exposing the property wrapper
     fetchRequest.wrappedValue
