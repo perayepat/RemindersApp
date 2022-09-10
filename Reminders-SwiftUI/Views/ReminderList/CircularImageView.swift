@@ -1,4 +1,4 @@
-/// Copyright (c) 2022 Razeware LLC
+/// Copyright (c) 2020 Razeware LLC
 /// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -29,35 +29,25 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
-//
 
-import Foundation
-import CoreData
+import SwiftUI
 
-
-extension ReminderList {
+struct CircularImageView: View {
+  var color: Color
   
-  @nonobjc public class func fetchRequest() -> NSFetchRequest<ReminderList> {
-    return NSFetchRequest<ReminderList>(entityName: "ReminderList")
-  }
-  
-  @NSManaged public var title: String
-  @NSManaged public var reminders: Array<Reminder>
-
-  //Create and Save Reminder Lists
-  static func create(withTitle title: String, in context: NSManagedObjectContext){
-    let newReminderList = ReminderList(context: context)
-    newReminderList.title = title
-    
-    do{
-      try context.save()
-    }catch{
-      let nserror = error as NSError
-      fatalError("Unresolved List error\(nserror.localizedDescription), \(nserror.userInfo)")
+  var body: some View {
+    VStack {
+      Image(systemName: "list.bullet")
+        .foregroundColor(.white)
     }
+    .padding(12)
+    .background(color)
+    .clipShape(Circle())
   }
 }
 
-extension ReminderList : Identifiable {
-  
+struct CircularImageView_Previews: PreviewProvider {
+    static var previews: some View {
+      CircularImageView(color: .red)
+    }
 }

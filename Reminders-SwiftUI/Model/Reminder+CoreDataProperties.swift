@@ -39,13 +39,15 @@ extension Reminder{
   @NSManaged var notes: String?
   @NSManaged var dueDate: Date?
   @NSManaged var priority: Int16
+  @NSManaged var list: ReminderList
   
-  static func createWith(title: String, notes:String? ,date:Date?, priority: ReminderPriority, using viewContext: NSManagedObjectContext){
+  static func createWith(title: String, notes:String? ,date:Date?, priority: ReminderPriority,in list: ReminderList, using viewContext: NSManagedObjectContext){
     let reminder = Reminder(context: viewContext)
     reminder.title = title
     reminder.notes = notes
     reminder.dueDate = date
     reminder.priority = priority.rawValue
+    reminder.list = list
     
     do{
       try viewContext.save()

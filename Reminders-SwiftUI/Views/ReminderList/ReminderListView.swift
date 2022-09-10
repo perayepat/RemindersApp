@@ -1,4 +1,4 @@
-/// Copyright (c) 2022 Razeware LLC
+/// Copyright (c) 2020 Razeware LLC
 /// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -29,35 +29,40 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
-//
 
-import Foundation
-import CoreData
+import SwiftUI
 
-
-extension ReminderList {
-  
-  @nonobjc public class func fetchRequest() -> NSFetchRequest<ReminderList> {
-    return NSFetchRequest<ReminderList>(entityName: "ReminderList")
+extension Color {
+  static var random: Color {
+    return Color(red: Double.random(in: 0...1),
+                 green: Double.random(in: 0...1),
+                 blue: Double.random(in: 0...1))
   }
-  
-  @NSManaged public var title: String
-  @NSManaged public var reminders: Array<Reminder>
+}
 
-  //Create and Save Reminder Lists
-  static func create(withTitle title: String, in context: NSManagedObjectContext){
-    let newReminderList = ReminderList(context: context)
-    newReminderList.title = title
-    
-    do{
-      try context.save()
-    }catch{
-      let nserror = error as NSError
-      fatalError("Unresolved List error\(nserror.localizedDescription), \(nserror.userInfo)")
+struct ReminderListView: View {
+  @Environment(\.managedObjectContext) var viewContext
+  @FetchRequest(sortDescriptors: []) var reminderLists: FetchedResults<ReminderList>
+  
+  var body: some View {
+    VStack {
+      List {
+        Section {
+          ForEach(reminderLists, id:\.self) { reminderList in
+            NavigationLink(destination: RemindersView(reminderList: reminderList)){
+              CircularImageView(color: Color.random)
+              Text(reminderList.title)
+            }
+          }
+        }
+      }
+      .listStyle(GroupedListStyle())
     }
   }
 }
 
-extension ReminderList : Identifiable {
-  
+struct ReminderListView_Previews: PreviewProvider {
+    static var previews: some View {
+        ReminderListView()
+    }
 }

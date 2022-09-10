@@ -1,4 +1,4 @@
-/// Copyright (c) 2022 Razeware LLC
+/// Copyright (c) 2020 Razeware LLC
 /// 
 /// Permission is hereby granted, free of charge, to any person obtaining a copy
 /// of this software and associated documentation files (the "Software"), to deal
@@ -29,35 +29,57 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
-//
 
-import Foundation
-import CoreData
+import SwiftUI
 
-
-extension ReminderList {
+struct ReminderListCreateView: View {
+  @Environment(\.managedObjectContext) var viewContext
+  @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
   
-  @nonobjc public class func fetchRequest() -> NSFetchRequest<ReminderList> {
-    return NSFetchRequest<ReminderList>(entityName: "ReminderList")
-  }
+  @State var text: String = ""
   
-  @NSManaged public var title: String
-  @NSManaged public var reminders: Array<Reminder>
-
-  //Create and Save Reminder Lists
-  static func create(withTitle title: String, in context: NSManagedObjectContext){
-    let newReminderList = ReminderList(context: context)
-    newReminderList.title = title
-    
-    do{
-      try context.save()
-    }catch{
-      let nserror = error as NSError
-      fatalError("Unresolved List error\(nserror.localizedDescription), \(nserror.userInfo)")
+  var body: some View {
+    NavigationView {
+      VStack(alignment: .leading) {
+        HStack {
+          Spacer()
+          CircularImageView(color: .red)
+          Spacer()
+        }
+        .padding([.top, .bottom])
+        HStack {
+          Text("Enter a list title")
+          Spacer()
+        }
+        .padding([.leading, .trailing])
+        TextField("Title", text: $text)
+          .padding()
+          .background(
+            Color(red: 231/255.0, green: 234/255.0, blue: 237/255.0)
+          )
+          .cornerRadius(10)
+          .padding()
+        Spacer()
+      }
+      .navigationBarTitle(Text("Create List"), displayMode: .inline)
+      .navigationBarItems(
+        leading: Button("Close") {
+          self.presentationMode.wrappedValue.dismiss()
+        },
+        trailing: Button("Save") {
+          if !self.text.isEmpty {
+            // Save Reminder List
+            ReminderList.create(withTitle: self.text, in: self.viewContext)
+            self.presentationMode.wrappedValue.dismiss()
+          }
+        }
+      )
     }
   }
 }
 
-extension ReminderList : Identifiable {
-  
+struct ReminderListCreateView_Previews: PreviewProvider {
+    static var previews: some View {
+        ReminderListCreateView()
+    }
 }

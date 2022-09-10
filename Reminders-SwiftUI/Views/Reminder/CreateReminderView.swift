@@ -32,6 +32,7 @@ extension ReminderPriority {
 struct CreateReminderView: View {
   @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
   @Environment(\.managedObjectContext) var viewContext: NSManagedObjectContext
+  let reminderList: ReminderList
   
   // MARK: - State -
   @State var text: String = ""
@@ -79,6 +80,7 @@ struct CreateReminderView: View {
                             notes: self.notes,
                             date: self.dueDate,
                             priority: self.priority,
+                            in: self.reminderList,
                             using: self.viewContext)
         
         self.presentationMode.wrappedValue.dismiss()
@@ -93,6 +95,9 @@ struct CreateReminderView: View {
 
 struct CreateReminderView_Previews: PreviewProvider {
   static var previews: some View {
-    CreateReminderView()
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let newReminderList = ReminderList(context: context)
+    newReminderList.title = "Preview List"
+    return CreateReminderView(reminderList: newReminderList).environment(\.managedObjectContext, context)
   }
 }

@@ -4,25 +4,26 @@ import SwiftUI
 
 struct RemindersView: View {
   @State var isShowingCreateModal: Bool = false
-  
   let fetchRequest = Reminder.completedRemindersFetchRequest()
   var reminders: FetchedResults<Reminder>{
     //exposing the property wrapper
     fetchRequest.wrappedValue
   }
+  let reminderList: ReminderList
+  
   
   var body: some View {
     VStack {
       List {
         Section {
-          ForEach(reminders, id: \.self) { reminder in
+          ForEach(reminderList.reminders, id: \.self) { reminder in
             ReminderRow(reminder: reminder)
           }
         }
       }
       .background(Color.white)
       HStack {
-        NewReminderButtonView(isShowingCreateModal: $isShowingCreateModal)
+        NewReminderButtonView(isShowingCreateModal: $isShowingCreateModal, reminderList: self.reminderList)
         Spacer()
       }
       .padding(.leading)
@@ -33,6 +34,9 @@ struct RemindersView: View {
 
 struct RemindersView_Previews: PreviewProvider {
   static var previews: some View {
-    RemindersView()
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let newReminderList = ReminderList(context: context)
+    newReminderList.title = "Preview List"
+    return RemindersView(reminderList: newReminderList).environment(\.managedObjectContext, context)
   }
 }
