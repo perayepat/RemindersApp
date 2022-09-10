@@ -6,8 +6,14 @@
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="priority" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
+        <relationship name="list" maxCount="1" deletionRule="Nullify" destinationEntity="ReminderList" inverseName="reminders" inverseEntity="ReminderList"/>
+    </entity>
+    <entity name="ReminderList" representedClassName="ReminderList" syncable="YES">
+        <attribute name="title" attributeType="String"/>
+        <relationship name="reminders" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Reminder" inverseName="list" inverseEntity="Reminder"/>
     </entity>
     <elements>
-        <element name="Reminder" positionX="-54" positionY="-9" width="128" height="104"/>
+        <element name="Reminder" positionX="-54" positionY="-9" width="128" height="119"/>
+        <element name="ReminderList" positionX="-36" positionY="45" width="128" height="59"/>
     </elements>
 </model>
