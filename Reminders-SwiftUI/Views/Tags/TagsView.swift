@@ -29,56 +29,32 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
-//
 
-import Foundation
-import CoreData
+import SwiftUI
 
-
-extension Tag {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Tag> {
-        return NSFetchRequest<Tag>(entityName: "Tag")
-    }
-
-    @NSManaged public var title: String
-    @NSManaged public var reminders: Set<Reminder>?
-  
-  static func fetchOrCreateWith(title: String, in context: NSManagedObjectContext) -> Tag {
-    let request: NSFetchRequest<Tag> = fetchRequest()
-    
-    let predicate = NSPredicate(format: "%K == %@", "title", title.lowercased())
-    request.predicate = predicate
-    
-    do {
-      //Context handling the fetch requests
-      let results = try context.fetch(request)
-      ///if tag exsists use that one otherwise create that tag
-      ///Grab the first tag if they exsist
-      if let tag = results.first {
-        return tag
-      } else {
-        let tag = Tag(context: context)
-        tag.title = title.lowercased()
-        return tag
+struct TagsView: View {
+  let tags: Array<Tag>
+    var body: some View {
+      NavigationView{
+        VStack{
+          List{
+            Section{
+              ForEach(tags,id: \.self){tag in
+                Text(tag.title)
+              }
+            }
+          }
+        }
+        .navigationTitle(Text("Tags"))
       }
-    } catch {
-      fatalError("Error fetching tag")
     }
-  }
 }
 
-// MARK: Generated accessors for reminders
-extension Tag {
-    @objc(addRemindersObject:)
-    @NSManaged public func addToReminders(_ value: Reminder)
-
-    @objc(removeRemindersObject:)
-    @NSManaged public func removeFromReminders(_ value: Reminder)
-
-    @objc(addReminders:)
-    @NSManaged public func addToReminders(_ values: NSSet)
-
-    @objc(removeReminders:)
-    @NSManaged public func removeFromReminders(_ values: NSSet)
+struct TagsView_Previews: PreviewProvider {
+    static var previews: some View {
+      let context  = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+      let tag = Tag(context: context)
+      tag.title = ""
+        return TagsView(tags: [tag])
+    }
 }
